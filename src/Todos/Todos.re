@@ -1,31 +1,36 @@
 [@bs.obj] external makeProps: unit => unit;
 
-type todo = {
-  id: string,
-  title: string,
-  isDone: bool,
-};
-
-let getNewTodo: unit => todo =
+let getNewTodo: unit => Types.todo =
   () => {id: Utils.guid(), title: "", isDone: false};
 
 let make = () => {
-  let initialTodos: list(todo) = [getNewTodo()];
+  let initialTodos: array(Types.todo) = [|getNewTodo()|];
 
   let (todos, setTodos) = React.useState(() => initialTodos);
 
-  let addTodo = () => setTodos(todos => List.append(todos, [getNewTodo()]));
+  let addTodo = () =>
+    setTodos(todos => Array.append(todos, [|getNewTodo()|]));
+
+  let toggleIsChecked = (index: int) => {
+    setTodos(todos => {
+      let todo = todos[index];
+      todos[index] = {...todo, isDone: !todo.isDone};
+      todos;
+    });
+  };
 
   let listElements =
-    todos
-    |> List.map(todo => {
-         <li key={todo.id}>
-           {React.string(todo.title ++ " / " ++ todo.id)}
-         </li>
-       });
+    Array.mapi(
+      (index, todo: Types.todo) => {
+        <li key={todo.id}>
+          <Todo todo toggleIsChecked={_ => toggleIsChecked(index)} />
+        </li>
+      },
+      todos,
+    );
 
   <div>
-    <ul> {React.array(Array.of_list(listElements))} </ul>
+    <ul> {React.array(listElements)} </ul>
     <button onClick={_ => addTodo()}> {React.string("Add todo")} </button>
   </div>;
 };
