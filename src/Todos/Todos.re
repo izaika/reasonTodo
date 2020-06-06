@@ -6,14 +6,15 @@ type todo = {
   isDone: bool,
 };
 
-let make = () => {
-  Js.log(Utils.guid());
+let getNewTodo: unit => todo =
+  () => {id: Utils.guid(), title: "", isDone: false};
 
-  let initialTodos: list(todo) = [
-    {id: Utils.guid(), title: "Wake up", isDone: true},
-  ];
+let make = () => {
+  let initialTodos: list(todo) = [getNewTodo()];
 
   let (todos, setTodos) = React.useState(() => initialTodos);
+
+  let addTodo = () => setTodos(todos => List.append(todos, [getNewTodo()]));
 
   let listElements =
     todos
@@ -25,6 +26,6 @@ let make = () => {
 
   <div>
     <ul> {React.array(Array.of_list(listElements))} </ul>
-    <button> {React.string("Add todo")} </button>
+    <button onClick={_ => addTodo()}> {React.string("Add todo")} </button>
   </div>;
 };
