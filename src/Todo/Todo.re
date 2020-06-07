@@ -3,7 +3,7 @@ let make =
     (
       ~todo: Types.todo,
       ~onCheckedChange: _ => unit,
-      ~onTitleChange: (~value: string) => unit,
+      ~onTitleChange: string => unit,
     ) => {
   let (title, setTitle) = React.useState(() => todo.title);
 
@@ -12,13 +12,13 @@ let make =
       onChange=onCheckedChange
       id={"todo_" ++ todo.id}
       type_="checkbox"
-      value={string_of_bool(todo.isDone)}
+      value={todo.isDone |> string_of_bool}
     />
     <input
       type_="text"
       value=title
-      onChange={e => setTitle(ReactEvent.Form.target(e)##value)}
-      onBlur={_ => onTitleChange(~value=title)}
+      onChange={e => ReactEvent.Form.target(e)##value |> setTitle}
+      onBlur={_ => title |> onTitleChange}
     />
   </div>;
 };
