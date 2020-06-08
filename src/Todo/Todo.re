@@ -3,7 +3,8 @@ let make =
     (
       ~todo: Types.todo,
       ~onCheckedChange: _ => unit,
-      ~onTitleChange: string => unit,
+      ~onTitleChange: (~title: string) => unit,
+      ~onDeleteClick: _ => unit,
     ) => {
   let (title, setTitle) = React.useState(() => todo.title);
 
@@ -18,7 +19,8 @@ let make =
       type_="text"
       value=title
       onChange={e => ReactEvent.Form.target(e)##value |> setTitle}
-      onBlur={_ => title |> onTitleChange}
+      onBlur={_ => onTitleChange(~title)}
     />
+    <button onClick=onDeleteClick> {"Delete" |> React.string} </button>
   </div>;
 };
