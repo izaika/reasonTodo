@@ -1,15 +1,6 @@
 [@bs.obj] external makeProps: unit => unit;
 
-let getNewTodo: unit => Types.todo =
-  () => {id: Utils.guid(), title: "", isDone: false};
-
-let toggleIsDone = (id: string, todo: Types.todo) =>
-  todo.id === id ? {...todo, isDone: !todo.isDone} : todo;
-
-let changeTitle = (id: string, title: string, todo: Types.todo) =>
-  todo.id === id ? {...todo, title} : todo;
-
-let filterTodo = (id: string, todo: Types.todo) => todo.id !== id;
+module Utils = TodosUtils;
 
 let todoToElement =
     (
@@ -31,18 +22,19 @@ let todoToElement =
 };
 
 let make = () => {
-  let (todos, setTodos) = React.useState(() => [getNewTodo()]);
+  let (todos, setTodos) = React.useState(() => [Utils.getNewTodo()]);
 
-  let addTodo = () => setTodos(todos => List.append(todos, [getNewTodo()]));
+  let addTodo = () =>
+    setTodos(todos => List.append(todos, [Utils.getNewTodo()]));
 
   let onCheckedChange = (~id: string) =>
-    id |> toggleIsDone |> List.map |> setTodos;
+    id |> Utils.toggleIsDone |> List.map |> setTodos;
 
   let onTitleChange = (~id: string, ~title: string) =>
-    changeTitle(id, title) |> List.map |> setTodos;
+    Utils.changeTitle(id, title) |> List.map |> setTodos;
 
   let onDeleteClick = (~id: string) =>
-    id |> filterTodo |> List.filter |> setTodos;
+    id |> Utils.filterTodo |> List.filter |> setTodos;
 
   let todosToElements: list(Types.todo) => list(React.element) =
     todoToElement(onCheckedChange, onTitleChange, onDeleteClick) |> List.map;

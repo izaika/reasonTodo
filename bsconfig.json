@@ -22,7 +22,8 @@
   "bs-dependencies": [
     "bs-css",
     "bs-css-emotion",
-    "reason-react"
+    "reason-react",
+    "reductive"
   ],
   "refmt": 3
 }
